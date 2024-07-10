@@ -1,4 +1,6 @@
 defmodule VsGlobalChatWeb.RoomChannel do
+  @moduledoc false
+
   alias VsGlobalChat.Player
   alias VsGlobalChat.Repo
   import Ecto.Query
@@ -14,16 +16,25 @@ defmodule VsGlobalChatWeb.RoomChannel do
         {:error, %{reason: "You're banned from this service."}}
       end
     else
-      case create_new_player(payload) do
-        {:ok, player} ->
-          if authorized?(player) do
-            {:ok, socket}
-          else
-            {:error, %{reason: "The player created is not authorized to use this service."}}
-          end
+      create_player_result =
+        case create_new_player(payload) do
+          {:ok, player} ->
+            {:ok, player}
 
-        {:error, _} ->
-          {:error, %{reason: "Player with UID already exists but they've changed their name."}}
+          {:error, _} ->
+            {:error, %{reason: "Player with UID already exists but they've changed their name."}}
+        end
+
+      player_authorized =
+        case create_player_result do
+          {:ok, player} -> authorized?(player)
+          {:error, _} -> false
+        end
+
+      if player_authorized do
+        {:ok, socket}
+      else
+        create_player_result
       end
     end
   end
