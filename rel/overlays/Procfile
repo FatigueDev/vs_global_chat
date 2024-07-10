@@ -1,1 +1,1 @@
-web: mix ecto.migrate && elixir -S mix phx.server
+web: mix ecto.migrate && mix assets.setup && mix assets.deploy && elixir -S mix phx.server
