@@ -35,3 +35,4 @@ vs_global_chat-*.tar
 npm-debug.log
 /assets/node_modules/
 
+assets/package-lock.json
