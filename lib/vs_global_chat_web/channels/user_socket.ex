@@ -1,5 +1,4 @@
 defmodule VsGlobalChatWeb.UserSocket do
-
   use Phoenix.Socket
 
   # A Socket handler
@@ -19,7 +18,6 @@ defmodule VsGlobalChatWeb.UserSocket do
   #
   # See the [`Channels guide`](https://hexdocs.pm/phoenix/channels.html)
   # for further details.
-
 
   # Socket params are passed from the client and can
   # be used to verify and authenticate a user. After
@@ -51,5 +49,6 @@ defmodule VsGlobalChatWeb.UserSocket do
   #
   # Returning `nil` makes this socket anonymous.
   @impl true
-  def id(socket), do: nil # "user_socket:#{socket.assigns.user_id}"
+  # "user_socket:#{socket.assigns.user_id}"
+  def id(socket), do: nil
 end
