@@ -1,4 +1,0 @@
-mix ecto.create
-mix ecto.migrate
-mix assets.setup
-mix assets.deploy
