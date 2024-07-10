@@ -15,7 +15,7 @@ jobs:
       - name: Checkout Github repo
         uses: actions/checkout@v4.1.7
       - name: Sets up an Erlang/OTP environment
-        uses: erlef/setup-beam@latest
+        uses: erlef/setup-beam@v1.18.0
         with:
           elixir-version: ${{ matrix.elixir }}
           otp-version: ${{ matrix.otp }}
@@ -53,7 +53,7 @@ jobs:
       - name: Checkout Github repo
         uses: actions/checkout@v4.1.7
       - name: Sets up an Erlang/OTP environment
-        uses: erlef/setup-beam@latest
+        uses: erlef/setup-beam@v1.18.0
         with:
           elixir-version: ${{ matrix.elixir }}
           otp-version: ${{ matrix.otp }}
@@ -92,7 +92,7 @@ jobs:
       - name: Checkout Github repo
         uses: actions/checkout@v4.1.7
       - name: Sets up an Erlang/OTP environment
-        uses: erlef/setup-beam@latest
+        uses: erlef/setup-beam@v1.18.0
         with:
           elixir-version: ${{ matrix.elixir }}
           otp-version: ${{ matrix.otp }}
