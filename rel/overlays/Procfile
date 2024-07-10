@@ -1,0 +1,1 @@
+web: mix ecto.migrate && elixir -S mix phx.server
