@@ -57,7 +57,7 @@ config :vs_global_chat, VsGlobalChatWeb.Endpoint,
   live_reload: [
     patterns: [
       ~r"priv/static/(?!uploads/).*(js|css|png|jpeg|jpg|gif|svg)$",
-      ~r"lib/vs_global_chat_web/(controllers|live|components)/.*(ex|heex)$"
+      ~r"lib/vs_global_chat_web/(channels|controllers|live|components)/.*(ex|heex)$"
     ]
   ]
 
