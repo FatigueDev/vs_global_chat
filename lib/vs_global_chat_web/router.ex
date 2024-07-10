@@ -19,5 +19,4 @@ defmodule VsGlobalChatWeb.Router do
 
     live "/", MessageLive
   end
-
 end

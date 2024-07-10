@@ -12,7 +12,6 @@
 
 <footer class="fixed bottom-0 w-full bg-slate-300 pb-2 px-5 pt-2">
   <.form :let={f} for={@changeset} id="form" phx-submit="new_message" phx-hook="Form">
-    
     <%= text_input(f, :name,
       id: "name",
       placeholder: "Name",
