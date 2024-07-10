@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="csrf-token" content={csrf_token_value()} />
+    <.live_title suffix=" · Phoenix Framework">
+      <%= assigns[:page_title] || "VsGlobalChat" %>
+    </.live_title>
+    <link phx-track-static rel="stylesheet" href={Routes.static_path(@conn, "/assets/app.css")} />
+    <script
+      defer
+      phx-track-static
+      type="text/javascript"
+      src={Routes.static_path(@conn, "/assets/app.js")}
+    >
+    </script>
+  </head>
+  <body>
+    <header class="bg-slate-800 w-full min-h-[15%] pt-5 pb-1 mb-2">
+      <section>
+        <nav>
+          <div class="text-white width-[10%] float-left ml-3 -mt-5 align-middle">
+            <b>People in Chat:</b>
+            <ul>
+              <%= for name <- @presence do %>
+                <li>
+                  <%= name %>
+                </li>
+              <% end %>
+            </ul>
+          </div>
+        </nav>
+        <h1 class="text-3xl mb-4 text-center font-mono text-white">VsGlobalChat</h1>
+      </section>
+    </header>
+    <%= @inner_content %>
+  </body>
+</html>

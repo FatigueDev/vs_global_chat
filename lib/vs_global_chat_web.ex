@@ -1,59 +1,56 @@
 defmodule VsGlobalChatWeb do
   @moduledoc """
   The entrypoint for defining your web interface, such
-  as controllers, components, channels, and so on.
+  as controllers, views, channels and so on.
 
   This can be used in your application as:
 
       use VsGlobalChatWeb, :controller
-      use VsGlobalChatWeb, :html
+      use VsGlobalChatWeb, :view
 
-  The definitions below will be executed for every controller,
-  component, etc, so keep them short and clean, focused
+  The definitions below will be executed for every view,
+  controller, etc, so keep them short and clean, focused
   on imports, uses and aliases.
 
   Do NOT define functions inside the quoted expressions
-  below. Instead, define additional modules and import
-  those modules here.
+  below. Instead, define any helper function in modules
+  and import those modules here.
   """
-
-  def static_paths, do: ~w(assets fonts images favicon.ico robots.txt)
-
-  def router do
-    quote do
-      use Phoenix.Router, helpers: false
-
-      # Import common connection and controller functions to use in pipelines
-      import Plug.Conn
-      import Phoenix.Controller
-      import Phoenix.LiveView.Router
-    end
-  end
-
-  def channel do
-    quote do
-      use Phoenix.Channel
-    end
-  end
 
   def controller do
     quote do
-      use Phoenix.Controller,
-        formats: [:html, :json],
-        layouts: [html: VsGlobalChatWeb.Layouts]
+      use Phoenix.Controller, namespace: VsGlobalChatWeb
 
       import Plug.Conn
+      import VsGlobalChatWeb.Gettext
+      alias VsGlobalChatWeb.Router.Helpers, as: Routes
+    end
+  end
 
-      unquote(verified_routes())
+  def view do
+    quote do
+      use Phoenix.View,
+        root: "lib/vs_global_chat_web/templates",
+        namespace: VsGlobalChatWeb
+
+      # Import convenience functions from controllers
+      import Phoenix.Controller,
+        only: [get_flash: 1, get_flash: 2, view_module: 1, view_template: 1]
+
+      # https://hexdocs.pm/phoenix_live_view/0.18.1/installation.html
+      import Phoenix.Component
+
+      # Include shared imports and aliases for views
+      unquote(view_helpers())
     end
   end
 
   def live_view do
     quote do
       use Phoenix.LiveView,
-        layout: {VsGlobalChatWeb.Layouts, :app}
+        layout: {VsGlobalChatWeb.LayoutView, :live}
 
-      unquote(html_helpers())
+      unquote(view_helpers())
     end
   end
 
@@ -61,49 +58,49 @@ defmodule VsGlobalChatWeb do
     quote do
       use Phoenix.LiveComponent
 
-      unquote(html_helpers())
+      unquote(view_helpers())
     end
   end
 
-  def html do
+  def router do
     quote do
-      use Phoenix.Component
+      use Phoenix.Router
 
-      # Import convenience functions from controllers
-      import Phoenix.Controller,
-        only: [get_csrf_token: 0, view_module: 1, view_template: 1]
-
-      # Include general helpers for rendering HTML
-      unquote(html_helpers())
+      import Plug.Conn
+      import Phoenix.Controller
+      import Phoenix.LiveView.Router
+      import Phoenix.Component
     end
   end
 
-  defp html_helpers do
+  def channel do
     quote do
-      # HTML escaping functionality
+      use Phoenix.Channel
+      import VsGlobalChatWeb.Gettext
+    end
+  end
+
+  defp view_helpers do
+    quote do
+      # Use all HTML functionality (forms, tags, etc)
       import Phoenix.HTML
-      # Core UI components and translation
-      import VsGlobalChatWeb.CoreComponents
+      import Phoenix.HTML.Form
+      use PhoenixHTMLHelpers
 
-      # Shortcut for generating JS commands
-      alias Phoenix.LiveView.JS
+      # Import LiveView and .heex helpers (live_render, live_patch, <.form>, etc)
+      import Phoenix.LiveView.Helpers
 
-      # Routes generation with the ~p sigil
-      unquote(verified_routes())
-    end
-  end
+      # Import basic rendering functionality (render, render_layout, etc)
+      import Phoenix.View
 
-  def verified_routes do
-    quote do
-      use Phoenix.VerifiedRoutes,
-        endpoint: VsGlobalChatWeb.Endpoint,
-        router: VsGlobalChatWeb.Router,
-        statics: VsGlobalChatWeb.static_paths()
+      import VsGlobalChatWeb.ErrorHelpers
+      import VsGlobalChatWeb.Gettext
+      alias VsGlobalChatWeb.Router.Helpers, as: Routes
     end
   end
 
   @doc """
-  When used, dispatch to the appropriate controller/live_view/etc.
+  When used, dispatch to the appropriate controller/view/etc.
   """
   defmacro __using__(which) when is_atom(which) do
     apply(__MODULE__, which, [])

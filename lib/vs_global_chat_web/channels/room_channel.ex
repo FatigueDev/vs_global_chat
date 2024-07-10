@@ -82,7 +82,7 @@ defmodule VsGlobalChatWeb.RoomChannel do
     if changeset.valid? do
       case Repo.insert(changeset) do
         {:ok, result} -> {:ok, result}
-        {:error, result} -> {:error, "You fucked up."}
+        {:error, _result} -> {:error, "You fucked up."}
       end
     else
       {:error, nil}

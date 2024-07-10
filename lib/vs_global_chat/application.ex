@@ -12,6 +12,7 @@ defmodule VsGlobalChat.Application do
       VsGlobalChat.Repo,
       {DNSCluster, query: Application.get_env(:vs_global_chat, :dns_cluster_query) || :ignore},
       {Phoenix.PubSub, name: VsGlobalChat.PubSub},
+      VsGlobalChat.Presence,
       # Start a worker by calling: VsGlobalChat.Worker.start_link(arg)
       # {VsGlobalChat.Worker, arg},
       # Start to serve requests, typically the last entry
