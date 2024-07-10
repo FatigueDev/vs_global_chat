@@ -10,6 +10,5 @@ defmodule VsGlobalChat.Repo.Migrations.CreatePlayers do
     end
 
     create unique_index(:players, [:uid])
-
   end
 end
