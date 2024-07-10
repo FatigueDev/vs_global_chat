@@ -20,5 +20,5 @@ config :vs_global_chat, VsGlobalChatWeb.Endpoint,
 config :vs_global_chat, VsGlobalChat.Repo,
   adapter: Ecto.Adapters.Postgres,
   url: System.get_env("DATABASE_URL"),
-  ssl: true,
+  # ssl: true,
   pool_size: 2
