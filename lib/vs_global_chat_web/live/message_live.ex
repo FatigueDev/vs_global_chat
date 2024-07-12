@@ -1,4 +1,5 @@
 defmodule VsGlobalChatWeb.MessageLive do
+  require Logger
   use VsGlobalChatWeb, :live_view
   import VsGlobalChat.LiveHelpers
   alias VsGlobalChat.Message
@@ -11,12 +12,14 @@ defmodule VsGlobalChatWeb.MessageLive do
 
     if connected?(socket) and is_session_authorized?(session) do
 
-      Message.subscribe()
+      Logger.info("Authorized and tracking presence for player: " <> to_string(Poison.Encoder.Map.encode(session["local_player"], %{})))
 
       {:ok, _} = Presence.track(self(), @presence_topic, session["local_player"].uid, %{name: session["local_player"].name})
-      Phoenix.PubSub.subscribe(PubSub, @presence_topic)
-
     end
+
+    Message.subscribe()
+
+    Phoenix.PubSub.subscribe(PubSub, @presence_topic)
 
     changeset =
       if session["local_player"] != nil do
@@ -39,17 +42,23 @@ defmodule VsGlobalChatWeb.MessageLive do
   end
 
   def is_session_authorized?(session) do
+
+    Logger.info("A session is attempting auth with: " <> to_string(Poison.Encoder.Map.encode(session, %{})))
+
     if Map.has_key?(session, "authorized") and Map.has_key?(session, "local_player") do
 
       player = session["local_player"]
 
       if is_nil(player) do
+        Logger.info("No player found.")
         false
       else
+        Logger.info("Found player. Banned is: " <> to_string(player.banned))
         player.banned == false
       end
 
     else
+      Logger.info("Session has no keys for authorized and local_player.")
       false
     end
   end
