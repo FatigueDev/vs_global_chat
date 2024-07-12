@@ -15,7 +15,7 @@ config :vs_global_chat,
 config :vs_global_chat, VsGlobalChatWeb.Endpoint,
   url: [host: "localhost"],
   adapter: Bandit.PhoenixAdapter,
-  render_errors: [view: LiveviewChatWeb.ErrorView, accepts: ~w(html json), layout: false],
+  render_errors: [view: VsGlobalChatWeb.ErrorView, accepts: ~w(html json), layout: false],
   pubsub_server: VsGlobalChat.PubSub,
   live_view: [signing_salt: "ytx1yEP8"]
 
