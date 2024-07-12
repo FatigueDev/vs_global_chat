@@ -1,53 +1,31 @@
 defmodule VsGlobalChatWeb.UserSocket do
   use Phoenix.LiveView.Socket
+  # alias Phoenix.Socket.Message
 
-  # A Socket handler
-  #
-  # It's possible to control the websocket connection and
-  # assign values that can be accessed by your channel topics.
+  channel "user_socket:*", VsGlobalChatWeb.UserChannel
 
-  ## Channels
-  # Uncomment the following line to define a "room:*" topic
-  # pointing to the `VsGlobalChatWeb.RoomChannel`:
-  #
-  channel "room:lobby", VsGlobalChatWeb.RoomChannel
-  #
-  # To create a channel file, use the mix task:
-  #
-  #     mix phx.gen.channel Room
-  #
-  # See the [`Channels guide`](https://hexdocs.pm/phoenix/channels.html)
-  # for further details.
-
-  # Socket params are passed from the client and can
-  # be used to verify and authenticate a user. After
-  # verification, you can put default assigns into
-  # the socket that will be set for all channels, ie
-  #
-  #     {:ok, assign(socket, :user_id, verified_user_id)}
-  #
-  # To deny connection, return `:error` or `{:error, term}`. To control the
-  # response the client receives in that case, [define an error handler in the
-  # websocket
-  # configuration](https://hexdocs.pm/phoenix/Phoenix.Endpoint.html#socket/3-websocket-configuration).
-  #
-  # See `Phoenix.Token` documentation for examples in
-  # performing token verification on connect.
   @impl true
-  def connect(_params, socket, _connect_info) do
-    {:ok, socket}
+  def connect(_params, socket, connect_info) do
+    # send(socket_pid, {:socket_push, :send_sid, socket.id})
+    # dbg params, structs: false
+    # dbg socket, structs: false
+    {:ok, assign(socket, :remote_ip, connect_info["remote_ip"])}
   end
 
-  # Socket IDs are topics that allow you to identify all sockets for a given user:
-  #
-  #     def id(socket), do: "user_socket:#{socket.assigns.user_id}"
-  #
-  # Would allow you to broadcast a "disconnect" event and terminate
-  # all active sockets and channels for a given user:
-  #
-  #     Elixir.VsGlobalChatWeb.Endpoint.broadcast("user_socket:#{user.id}", "disconnect", %{})
-  #
-  # Returning `nil` makes this socket anonymous.
+#   def handle_info(
+#       %Message{topic: topic, event: "phx_leave"} = message,
+#       %{topic: topic, serializer: serializer, transport_pid: transport_pid} = socket
+#     ) do
+#   send transport_pid, Poison.encode(message)
+#   {:stop, {:shutdown, :left}, socket}
+# end
+
+#   @impl true
+#   def handle_in(:send_sid, state) do
+#     dbg "HIT with " <> state
+#     {:ok, state}
+#   end
+
   @impl true
-  def id(socket), do: "user_socket:#{socket.id}"
+  def id(socket), do: "user_socket:#{socket.assigns.remote_ip}"
 end

@@ -58,7 +58,7 @@ config :vs_global_chat, VsGlobalChatWeb.Endpoint,
     patterns: [
       ~r"priv/static/(?!uploads/).*(js|css|png|jpeg|jpg|gif|svg)$",
       ~r"priv/gettext/.*(po)$",
-      ~r"lib/vs_global_chat_web/(channels|controllers|live|components)/.*(ex|heex)$"
+      ~r"lib/vs_global_chat_web/(channels|controllers|live|templates|views|components)/.*(ex|heex)$"
     ]
   ]
 
@@ -66,7 +66,7 @@ config :vs_global_chat, VsGlobalChatWeb.Endpoint,
 config :vs_global_chat, dev_routes: true
 
 # Do not include metadata nor timestamps in development logs
-config :logger, :console, format: "[$level] $message\n"
+config :logger, :console, truncate: :infinity, format: "[$level] $message\n"
 
 # Set a higher stacktrace during development. Avoid configuring such
 # in production as building large stacktraces may be expensive.

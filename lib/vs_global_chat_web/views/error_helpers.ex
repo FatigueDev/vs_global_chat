@@ -40,9 +40,9 @@ defmodule VsGlobalChatWeb.ErrorHelpers do
     # should be written to the errors.po file. The :count option is
     # set by Ecto and indicates we should also apply plural rules.
     if count = opts[:count] do
-      Gettext.dngettext(LiveviewChatWeb.Gettext, "errors", msg, msg, count, opts)
+      Gettext.dngettext(VsGlobalChatWeb.Gettext, "errors", msg, msg, count, opts)
     else
-      Gettext.dgettext(LiveviewChatWeb.Gettext, "errors", msg, opts)
+      Gettext.dgettext(VsGlobalChatWeb.Gettext, "errors", msg, opts)
     end
   end
 end

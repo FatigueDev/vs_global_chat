@@ -7,13 +7,13 @@ defmodule VsGlobalChatWeb.Endpoint do
   @session_options [
     store: :cookie,
     key: "_vs_global_chat_key",
-    signing_salt: "nsBVx2fc",
-    same_site: "Lax"
+    signing_salt: "nsBVx2fc"
   ]
 
   socket "/live", VsGlobalChatWeb.UserSocket,
-    websocket: [connect_info: [session: @session_options]],
-    longpoll: [connect_info: [session: @session_options]]
+    websocket: [connect_info: [:peer_data, session: @session_options]],
+    longpoll: [connect_info: [:peer_data, session: @session_options]]
+
 
   # Serve at "/" the static files from "priv/static" directory.
   #
@@ -44,7 +44,7 @@ defmodule VsGlobalChatWeb.Endpoint do
   plug Plug.Parsers,
     parsers: [:urlencoded, :multipart, :json],
     pass: ["*/*"],
-    json_decoder: Phoenix.json_library()
+    json_decoder: Poison
 
   plug Plug.MethodOverride
   plug Plug.Head

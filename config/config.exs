@@ -15,10 +15,7 @@ config :vs_global_chat,
 config :vs_global_chat, VsGlobalChatWeb.Endpoint,
   url: [host: "localhost"],
   adapter: Bandit.PhoenixAdapter,
-  render_errors: [
-    formats: [html: VsGlobalChatWeb.ErrorHTML, json: VsGlobalChatWeb.ErrorJSON],
-    layout: false
-  ],
+  render_errors: [view: LiveviewChatWeb.ErrorView, accepts: ~w(html json), layout: false],
   pubsub_server: VsGlobalChat.PubSub,
   live_view: [signing_salt: "ytx1yEP8"]
 
@@ -38,7 +35,7 @@ config :logger, :console,
   metadata: [:request_id]
 
 # Use Jason for JSON parsing in Phoenix
-config :phoenix, :json_library, Jason
+config :phoenix, :json_library, Poison
 
 # Import environment specific config. This must remain at the bottom
 # of this file so it overrides the configuration defined above.

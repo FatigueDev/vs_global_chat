@@ -20,5 +20,5 @@ defmodule VsGlobalChatWeb.Gettext do
 
   See the [Gettext Docs](https://hexdocs.pm/gettext) for detailed usage.
   """
-  use Gettext, otp_app: :liveview_chat
+  use Gettext, otp_app: :vs_global_chat
 end
