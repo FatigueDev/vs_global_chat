@@ -108,6 +108,7 @@ jobs:
       - run: mix test --trace --slowest 10
       
   deploy:
+    if: always()
     needs:
       - static-code-analysis
       - mix-test
