@@ -2,6 +2,7 @@ defmodule VsGlobalChatWeb.Plug.Authorization do
   @moduledoc """
   Reads a user_details cookie and puts user_details into session
   """
+  require Logger
   alias VsGlobalChatWeb.MessageLive
   alias VsGlobalChatWeb.NotAuthorized
   import Plug.Conn
@@ -17,8 +18,15 @@ defmodule VsGlobalChatWeb.Plug.Authorization do
       |> Tuple.to_list()
       |> Enum.join(".")
 
+    Logger.info("Connection received, attepting to get local_player for them with remote_ip: " <> remote_ip)
+
     local_player = get_player_by_remote_ip(remote_ip)
+
+    Logger.info("Their local_player result was: " <> to_string(Poison.Encoder.Map.encode(local_player, %{})))
+
     if authorized?(local_player) do
+
+      Logger.info(remote_ip <> " was authorized")
 
       conn
       # Makes it available in LiveView
@@ -31,6 +39,8 @@ defmodule VsGlobalChatWeb.Plug.Authorization do
       |> assign(:local_player, local_player)
 
     else
+
+      Logger.info(remote_ip <> " was NOT authorized")
 
       conn
         |> put_session(:remote_ip, nil)
