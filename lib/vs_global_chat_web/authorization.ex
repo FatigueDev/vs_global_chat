@@ -3,8 +3,6 @@ defmodule VsGlobalChatWeb.Plug.Authorization do
   Reads a user_details cookie and puts user_details into session
   """
   require Logger
-  alias VsGlobalChatWeb.MessageLive
-  alias VsGlobalChatWeb.NotAuthorized
   import Plug.Conn
   import VsGlobalChat.LiveHelpers
 
@@ -13,14 +11,10 @@ defmodule VsGlobalChatWeb.Plug.Authorization do
   end
 
   def call(conn, _opts) do
-    remote_ip =
-      conn.remote_ip
-      |> Tuple.to_list()
-      |> Enum.join(".")
 
+    remote_ip = get_remote_ip(conn)
 
-    Logger.info("Connection received, their conn is: " <> to_string(Poison.Encoder.Map.encode(conn, %{})))
-    # Logger.info("Connection received, attepting to get local_player for them with remote_ip: " <> remote_ip)
+    Logger.info("Connection received, attepting to get local_player for them with remote_ip: " <> remote_ip)
 
     local_player = get_player_by_remote_ip(remote_ip)
 
@@ -58,5 +52,23 @@ defmodule VsGlobalChatWeb.Plug.Authorization do
 
     end
 
+  end
+
+  @spec get_remote_ip(Plug.Conn.t()) :: binary()
+  def get_remote_ip(conn) do
+    forwarded_for = conn
+      |> Plug.Conn.get_req_header("x-forwarded-for")
+      |> List.first()
+
+    if forwarded_for do
+      forwarded_for
+      |> String.split(",")
+      |> Enum.map(&String.trim/1)
+      |> List.first()
+    else
+      conn.remote_ip
+      |> :inet_parse.ntoa()
+      |> to_string()
+    end
   end
 end

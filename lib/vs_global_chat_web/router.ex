@@ -4,6 +4,7 @@ defmodule VsGlobalChatWeb.Router do
   pipeline :browser do
     plug :accepts, ["html"]
     plug :fetch_session
+    plug RemoteIp
     plug VsGlobalChatWeb.Plug.Authorization
     plug :fetch_live_flash
     plug :put_root_layout, html: {VsGlobalChatWeb.LayoutView, :root}

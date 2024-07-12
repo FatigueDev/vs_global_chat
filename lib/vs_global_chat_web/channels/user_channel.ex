@@ -1,6 +1,5 @@
 defmodule VsGlobalChatWeb.UserChannel do
   use VsGlobalChatWeb, :channel
-  alias VsGlobalChat.Player
   import VsGlobalChat.LiveHelpers
 
   @impl true

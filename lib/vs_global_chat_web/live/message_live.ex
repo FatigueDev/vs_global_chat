@@ -1,7 +1,6 @@
 defmodule VsGlobalChatWeb.MessageLive do
   require Logger
   use VsGlobalChatWeb, :live_view
-  import VsGlobalChat.LiveHelpers
   alias VsGlobalChat.Message
   alias VsGlobalChat.Presence
   alias VsGlobalChat.PubSub
