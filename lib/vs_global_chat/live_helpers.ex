@@ -30,8 +30,8 @@ defmodule VsGlobalChat.LiveHelpers do
       nil
     end
   end
-  def get_player_by_remote_ip(_), do: nil
 
+  def get_player_by_remote_ip(_), do: nil
 
   def create_new_player(name, uid, ip) do
     changeset =
@@ -42,10 +42,18 @@ defmodule VsGlobalChat.LiveHelpers do
     if changeset.valid? do
       case Repo.insert(changeset) do
         {:ok, result} -> {:ok, result}
-        {:error, result} -> {:error, result}
+        {:error, changeset} -> {:error, errors_on(changeset)}
       end
     else
       {:error, nil}
     end
+  end
+
+  def errors_on(changeset) do
+    Ecto.Changeset.traverse_errors(changeset, fn {message, opts} ->
+      Regex.replace(~r"%{(\w+)}", message, fn _, key ->
+        opts |> Keyword.get(String.to_existing_atom(key), key) |> to_string()
+      end)
+    end)
   end
 end

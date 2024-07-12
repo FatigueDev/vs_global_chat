@@ -11,21 +11,24 @@ defmodule VsGlobalChatWeb.Plug.Authorization do
   end
 
   def call(conn, _opts) do
-
     remote_ip = get_remote_ip(conn)
 
-    Logger.info("Connection received, attepting to get local_player for them with remote_ip: " <> remote_ip)
+    Logger.info(
+      "Connection received, attepting to get local_player for them with remote_ip: " <> remote_ip
+    )
 
     local_player = get_player_by_remote_ip(remote_ip)
 
     if local_player != nil do
-      Logger.info("Their local_player result was: " <> to_string(Poison.Encoder.Map.encode(local_player, %{})))
+      Logger.info(
+        "Their local_player result was: " <>
+          to_string(Poison.Encoder.Map.encode(local_player, %{}))
+      )
     else
       Logger.info("Their player result was nil.")
     end
 
     if authorized?(local_player) do
-
       Logger.info(remote_ip <> " was authorized")
 
       conn
@@ -37,26 +40,23 @@ defmodule VsGlobalChatWeb.Plug.Authorization do
       |> assign(:remote_ip, remote_ip)
       |> assign(:authorized, true)
       |> assign(:local_player, local_player)
-
     else
-
       Logger.info(remote_ip <> " was NOT authorized")
 
       conn
-        |> put_session(:remote_ip, nil)
-        |> put_session(:authorized, nil)
-        |> put_session(:local_player, nil)
-        |> assign(:remote_ip, nil)
-        |> assign(:authorized, nil)
-        |> assign(:local_player, nil)
-
+      |> put_session(:remote_ip, nil)
+      |> put_session(:authorized, nil)
+      |> put_session(:local_player, nil)
+      |> assign(:remote_ip, nil)
+      |> assign(:authorized, nil)
+      |> assign(:local_player, nil)
     end
-
   end
 
   @spec get_remote_ip(Plug.Conn.t()) :: binary()
   def get_remote_ip(conn) do
-    forwarded_for = conn
+    forwarded_for =
+      conn
       |> Plug.Conn.get_req_header("x-forwarded-for")
       |> List.first()
 

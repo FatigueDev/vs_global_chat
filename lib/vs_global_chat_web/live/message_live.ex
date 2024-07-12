@@ -5,15 +5,19 @@ defmodule VsGlobalChatWeb.MessageLive do
   alias VsGlobalChat.Presence
   alias VsGlobalChat.PubSub
 
-  @presence_topic "liveview_chat_presence"
+  @presence_topic "vs_global_chat_presence"
 
   def mount(_params, session, socket) do
-
     if connected?(socket) and is_session_authorized?(session) do
+      Logger.info(
+        "Authorized and tracking presence for player: " <>
+          to_string(Poison.Encoder.Map.encode(session["local_player"], %{}))
+      )
 
-      Logger.info("Authorized and tracking presence for player: " <> to_string(Poison.Encoder.Map.encode(session["local_player"], %{})))
-
-      {:ok, _} = Presence.track(self(), @presence_topic, session["local_player"].uid, %{name: session["local_player"].name})
+      {:ok, _} =
+        Presence.track(self(), @presence_topic, session["local_player"].uid, %{
+          name: session["local_player"].name
+        })
     end
 
     Message.subscribe()
@@ -22,7 +26,7 @@ defmodule VsGlobalChatWeb.MessageLive do
 
     changeset =
       if session["local_player"] != nil do
-        dbg "Should have set name to " <> session["local_player"].name
+        dbg("Should have set name to " <> session["local_player"].name)
         Message.changeset(%Message{}, %{"name" => session["local_player"].name})
       else
         Message.changeset(%Message{}, %{})
@@ -31,21 +35,21 @@ defmodule VsGlobalChatWeb.MessageLive do
     messages = Message.list_messages() |> Enum.reverse()
 
     {:ok,
-    assign(socket,
-      messages: messages,
-      changeset: changeset,
-      authorized: is_session_authorized?(session),
-      local_player: if(session["local_player"] != nil, do: session["local_player"], else: nil),
-      presence: get_presence_names()
-    ), temporary_assigns: [messages: []]}
+     assign(socket,
+       messages: messages,
+       changeset: changeset,
+       authorized: is_session_authorized?(session),
+       local_player: if(session["local_player"] != nil, do: session["local_player"], else: nil),
+       presence: get_presence_names()
+     ), temporary_assigns: [messages: []]}
   end
 
   def is_session_authorized?(session) do
-
-    Logger.info("A session is attempting auth with: " <> to_string(Poison.Encoder.Map.encode(session, %{})))
+    Logger.info(
+      "A session is attempting auth with: " <> to_string(Poison.Encoder.Map.encode(session, %{}))
+    )
 
     if Map.has_key?(session, "authorized") and Map.has_key?(session, "local_player") do
-
       player = session["local_player"]
 
       if is_nil(player) do
@@ -55,35 +59,19 @@ defmodule VsGlobalChatWeb.MessageLive do
         Logger.info("Found player. Banned is: " <> to_string(player.banned))
         player.banned == false
       end
-
     else
       Logger.info("Session has no keys for authorized and local_player.")
       false
     end
   end
 
-  # def try_get_local_player(socket) do
-  #   case VsGlobalChatWeb.UserChannel.handle_call("user_socket:get_local_player", nil, socket) do
-  #     {:ok, {:reply, local_player: local_player}, socket} -> local_player;
-  #     {:error, message} -> dbg {:error, message}; nil
-  #   end
-  # end
-
-  # def try_authorize_local_player(socket) do
-  #   case VsGlobalChatWeb.UserChannel.handle_call("user_socket:get_local_authorization", nil, socket) do
-  #     {:ok, {:reply, authorized: authorized}, socket} -> authorized
-  #     {:error, {:reply, message: message}, socket} -> dbg message; false;
-  #   end
-  # end
-
   def render(assigns) do
     VsGlobalChatWeb.MessageView.render("messages.html", assigns)
   end
 
   def handle_event("new_message", %{"message" => params}, socket) do
-    dbg socket, structs: false
-
     params = Map.put(params, "name", socket.assigns.local_player.name)
+
     case Message.create_message(params) do
       {:error, changeset} ->
         {:noreply, assign(socket, changeset: changeset)}

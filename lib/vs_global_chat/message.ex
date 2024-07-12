@@ -37,11 +37,11 @@ defmodule VsGlobalChat.Message do
   end
 
   def subscribe() do
-    PubSub.subscribe(VsGlobalChat.PubSub, "liveview_chat")
+    PubSub.subscribe(VsGlobalChat.PubSub, "new_message_in_database")
   end
 
   def notify({:ok, message}, event) do
-    PubSub.broadcast(VsGlobalChat.PubSub, "liveview_chat", {event, message})
+    PubSub.broadcast(VsGlobalChat.PubSub, "new_message_in_database", {event, message})
   end
 
   def notify({:error, reason}, _event), do: {:error, reason}
