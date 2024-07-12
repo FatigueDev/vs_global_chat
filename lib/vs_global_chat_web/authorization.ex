@@ -18,11 +18,17 @@ defmodule VsGlobalChatWeb.Plug.Authorization do
       |> Tuple.to_list()
       |> Enum.join(".")
 
-    Logger.info("Connection received, attepting to get local_player for them with remote_ip: " <> remote_ip)
+
+    Logger.info("Connection received, their conn is: " <> to_string(Poison.Encoder.Map.encode(conn, %{})))
+    # Logger.info("Connection received, attepting to get local_player for them with remote_ip: " <> remote_ip)
 
     local_player = get_player_by_remote_ip(remote_ip)
 
-    Logger.info("Their local_player result was: " <> to_string(Poison.Encoder.Map.encode(local_player, %{})))
+    if local_player != nil do
+      Logger.info("Their local_player result was: " <> to_string(Poison.Encoder.Map.encode(local_player, %{})))
+    else
+      Logger.info("Their player result was nil.")
+    end
 
     if authorized?(local_player) do
 
