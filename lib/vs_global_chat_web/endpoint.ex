@@ -1,18 +1,25 @@
 defmodule VsGlobalChatWeb.Endpoint do
   use Phoenix.Endpoint, otp_app: :vs_global_chat
 
+  plug RemoteIp, headers: ["x-forwarded-for"]
+  plug PhoenixDDoS
+
   # The session will be stored in the cookie and signed,
   # this means its contents can be read but not tampered with.
   # Set :encryption_salt if you would also like to encrypt it.
   @session_options [
     store: :cookie,
     key: "_vs_global_chat_key",
-    signing_salt: "nsBVx2fc"
+    signing_salt: "nsBVx2fc",
+    same_site: "Lax"
   ]
 
-  socket "/live", VsGlobalChatWeb.UserSocket,
-    websocket: [connect_info: [:peer_data, session: @session_options]],
-    longpoll: [connect_info: [:peer_data, session: @session_options]]
+  socket "/live", VsGlobalChatWeb.DashboardSocket,
+    websocket: [connect_info: [:peer_data, :x_headers], error_handler: {VsGlobalChatWeb.DashboardSocket, :handle_error, []}],
+    longpoll: [connect_info: [:peer_data, :x_headers], error_handler: {VsGlobalChatWeb.DashboardSocket, :handle_error, []}]
+
+  socket "/socket", VsGlobalChatWeb.UserSocket,
+    websocket: [connect_info: [:peer_data, :x_headers]]
 
   # Serve at "/" the static files from "priv/static" directory.
   #

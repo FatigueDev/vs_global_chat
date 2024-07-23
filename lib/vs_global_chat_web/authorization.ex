@@ -1,74 +1,75 @@
-defmodule VsGlobalChatWeb.Plug.Authorization do
-  @moduledoc """
-  Reads a user_details cookie and puts user_details into session
-  """
-  require Logger
-  import Plug.Conn
-  import VsGlobalChat.LiveHelpers
+# defmodule VsGlobalChatWeb.Plug.Authorization do
+#   @moduledoc """
+#   Reads a user_details cookie and puts user_details into session
+#   """
+#   require Logger
+#   import Plug.Conn
+#   import Plug.BasicAuth
+#   # import VsGlobalChat.Helpers.User
+#   # alias Calendar.TimeZoneDatabase
+#   alias VsGlobalChat.User
+#   # import VsGlobalChat.Helpers.LiveView
 
-  def init(_) do
-    %{}
-  end
+#   def init(_) do
+#     %{}
+#   end
 
-  def call(conn, _opts) do
-    remote_ip = get_remote_ip(conn)
+#   def call(conn, _opts) do
+#     case parse_basic_auth(conn) do
+#       {uid, token} ->
+#         # Logger.info("A conn is trying to connect to the site:\nUID: #{uid}\nToken: #{token}\nConn:\n #{log_conn(conn)}", %{conn: log_conn(conn), uid: uid, token: token});
+#         conn |> try_auth(uid, token)
+#       :error ->
+#         conn |> request_basic_auth() |> halt()
+#     end
+#   end
 
-    Logger.info(
-      "Connection received, attepting to get local_player for them with remote_ip: " <> remote_ip
-    )
+#   # defp log_conn(conn) do
+#   #   """
+#   #   {
+#   #     method: #{conn.method},
+#   #     user_agent: #{Plug.Conn.get_req_header(conn, "user-agent")},
+#   #     conn_data:
+#   #     {
+#   #       port: #{conn.port}
+#   #       address: #{get_remote_ip(conn)}
+#   #     }
+#   #   }
+#   #   """
+#   # end
 
-    local_player = get_player_by_remote_ip(remote_ip)
+#   defp try_auth(conn, uid, token) do
+#     case find_by_uid_and_auth_token(uid, token) do
+#       %User{} = user -> try_auth_admin(conn, user)
+#       _ -> conn |> request_basic_auth() |> halt()
+#     end
+#   end
 
-    if local_player != nil do
-      Logger.info(
-        "Their local_player result was: " <>
-          to_string(Poison.Encoder.Map.encode(local_player, %{}))
-      )
-    else
-      Logger.info("Their player result was nil.")
-    end
+#   defp try_auth_admin(conn, %User{} = user) do
+#     case authenticate_administrator(user) do
+#       %User{} = _administrator ->
+#         aussie_time = DateTime.to_string(DateTime.shift(DateTime.utc_now(), [hour: +10]))
+#         Logger.info("#{user.name} (#{user.permissions}) logged into the site at #{aussie_time} from #{get_remote_ip(conn)}")
+#         conn
+#       _ -> conn |> request_basic_auth() |> halt()
+#     end
+#   end
 
-    if authorized?(local_player) do
-      Logger.info(remote_ip <> " was authorized")
+#   def get_remote_ip(conn) do
+#     forwarded_for =
+#       conn
+#       |> Plug.Conn.get_req_header("x-forwarded-for")
+#       |> List.first()
 
-      conn
-      # Makes it available in LiveView
-      |> put_session(:remote_ip, remote_ip)
-      |> put_session(:authorized, true)
-      |> put_session(:local_player, local_player)
-      # Makes it available in traditional controllers etc
-      |> assign(:remote_ip, remote_ip)
-      |> assign(:authorized, true)
-      |> assign(:local_player, local_player)
-    else
-      Logger.info(remote_ip <> " was NOT authorized")
-
-      conn
-      |> put_session(:remote_ip, nil)
-      |> put_session(:authorized, nil)
-      |> put_session(:local_player, nil)
-      |> assign(:remote_ip, nil)
-      |> assign(:authorized, nil)
-      |> assign(:local_player, nil)
-    end
-  end
-
-  @spec get_remote_ip(Plug.Conn.t()) :: binary()
-  def get_remote_ip(conn) do
-    forwarded_for =
-      conn
-      |> Plug.Conn.get_req_header("x-forwarded-for")
-      |> List.first()
-
-    if forwarded_for do
-      forwarded_for
-      |> String.split(",")
-      |> Enum.map(&String.trim/1)
-      |> List.first()
-    else
-      conn.remote_ip
-      |> :inet_parse.ntoa()
-      |> to_string()
-    end
-  end
-end
+#     if forwarded_for do
+#       forwarded_for
+#       |> String.split(",")
+#       |> Enum.map(&String.trim/1)
+#       |> List.first()
+#     else
+#       conn.remote_ip
+#       |> :inet_parse.ntoa()
+#       |> to_string()
+#     end
+#   end
+# end

@@ -19,8 +19,14 @@ config :vs_global_chat, VsGlobalChat.Repo,
 config :vs_global_chat, VsGlobalChatWeb.Endpoint,
   # Binding to loopback ipv4 address prevents access from other machines.
   # Change to `ip: {0, 0, 0, 0}` to allow access from other machines.
+  # https: [
+  #   port: 4001,
+  #   cipher_suite: :strong,
+  #   keyfile: "priv/cert/selfsigned_key.pem",
+  #   certfile: "priv/cert/selfsigned.pem"
+  # ],
   http: [ip: {127, 0, 0, 1}, port: 4000],
-  check_origin: false,
+  check_origin: true,
   code_reloader: true,
   debug_errors: true,
   server: true,
@@ -54,19 +60,24 @@ config :vs_global_chat, VsGlobalChatWeb.Endpoint,
 
 # Watch static and templates for browser reloading.
 config :vs_global_chat, VsGlobalChatWeb.Endpoint,
+  reloadable_compilers: [:phoenix, :elixir, :surface],
   live_reload: [
     patterns: [
       ~r"priv/static/(?!uploads/).*(js|css|png|jpeg|jpg|gif|svg)$",
       ~r"priv/gettext/.*(po)$",
-      ~r"lib/vs_global_chat_web/(channels|controllers|live|templates|views|components)/.*(ex|heex)$"
+      ~r"lib/vs_global_chat_web/(channels|controllers|live|templates|views|components)/.*(ex|heex|sface|js)$",
     ]
   ]
 
 # Enable dev routes for dashboard and mailbox
 config :vs_global_chat, dev_routes: true
 
-# Do not include metadata nor timestamps in development logs
-config :logger, :console, truncate: :infinity, format: "[$level] $message\n"
+config :logger,
+  backends: [{LoggerFileBackend, :debug_log}, :console]
+
+config :logger, :debug_log,
+  path: "priv/log/debug.log",
+  level: :debug
 
 # Set a higher stacktrace during development. Avoid configuring such
 # in production as building large stacktraces may be expensive.

@@ -10,6 +10,7 @@ defmodule VsGlobalChat.Application do
     children = [
       VsGlobalChatWeb.Telemetry,
       VsGlobalChat.Repo,
+      {Cachex, name: VsGlobalChat.Cache.cache_name()},
       {DNSCluster, query: Application.get_env(:vs_global_chat, :dns_cluster_query) || :ignore},
       {Phoenix.PubSub, name: VsGlobalChat.PubSub},
       VsGlobalChat.Presence,

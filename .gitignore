@@ -36,3 +36,11 @@ npm-debug.log
 /assets/node_modules/
 
 assets/package-lock.json
+
+.elixir_ls
+.elixir-tools
+.vscode
+.zed
+
+priv/log/
+do_proto.sh

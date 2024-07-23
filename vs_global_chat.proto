@@ -1,0 +1,10 @@
+syntax = "proto3";
+
+package VsGlobalChatProto;
+
+option csharp_namespace = "VsGlobalChat.ProtoBuf";
+
+message CreateMessage {
+  string sender = 1;
+  string message = 2;
+}

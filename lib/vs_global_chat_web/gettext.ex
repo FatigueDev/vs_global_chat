@@ -5,7 +5,7 @@ defmodule VsGlobalChatWeb.Gettext do
   By using [Gettext](https://hexdocs.pm/gettext),
   your module gains a set of macros for translations, for example:
 
-      import VsGlobalChatWeb.Gettext
+      import VintagestoryElixirTestWeb.Gettext
 
       # Simple translation
       gettext("Here is the string to translate")

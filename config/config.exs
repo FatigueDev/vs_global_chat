@@ -32,10 +32,45 @@ config :esbuild,
 # Configures Elixir's Logger
 config :logger, :console,
   format: "$time $metadata[$level] $message\n",
-  metadata: [:request_id]
+  metadata: [:request_id, :remote_ip]
 
 # Use Jason for JSON parsing in Phoenix
 config :phoenix, :json_library, Poison
+
+# Use DDOS protection
+config :phoenix_ddos,
+  safelist_ips: [],
+  blocklist_ips: [],
+  protections: [
+    # ip rate limit
+    {PhoenixDDoS.IpRateLimit, allowed: 600, period: {2, :minutes}}
+  ]
+
+# Make sure we setup bulma contexts for use in our components.
+config :surface,
+  components: [
+    {Surface.Components.Form.Field, [default_class: "field"]},
+    {Surface.Components.Form.Label, [default_class: "label"]},
+    {SurfaceBulma.Collapsible, propagate_context_to_slots: true},
+    {SurfaceBulma.Dropdown, propagate_context_to_slots: true},
+    {SurfaceBulma.Navbar, propagate_context_to_slots: true},
+    {SurfaceBulma.Navbar.Brand, propagate_context_to_slots: true},
+    {SurfaceBulma.Navbar.Dropdown, propagate_context_to_slots: true},
+    {SurfaceBulma.Form, propagate_context_to_slots: true},
+    {SurfaceBulma.Form.Checkbox, propagate_context_to_slots: true},
+    {SurfaceBulma.Form.Input, propagate_context_to_slots: true},
+    {SurfaceBulma.Form.TextInput, propagate_context_to_slots: true},
+    {SurfaceBulma.Form.PasswordInput, propagate_context_to_slots: true},
+    {SurfaceBulma.Form.InputWrapper, propagate_context_to_slots: true},
+    {SurfaceBulma.Form.InputWrapperTest.Slot, propagate_context_to_slots: true},
+    {SurfaceBulma.Form.InputWrapper, :render_left_addon, propagate_context_to_slots: true},
+    {SurfaceBulma.Form.InputWrapper, :render_right_addon, propagate_context_to_slots: true},
+    {SurfaceBulma.Form.FileInput, propagate_context_to_slots: true},
+    {SurfaceBulma.Form.Select, propagate_context_to_slots: true},
+    {SurfaceBulma.Panel, propagate_context_to_slots: true},
+    {SurfaceBulma.Panel.Tab, propagate_context_to_slots: true},
+    {SurfaceBulma.Panel.Tab.TabItem, propagate_context_to_slots: true}
+  ]
 
 # Import environment specific config. This must remain at the bottom
 # of this file so it overrides the configuration defined above.

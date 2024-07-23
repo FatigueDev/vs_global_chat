@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en" class="[scrollbar-gutter:stable]">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="csrf-token" content={get_csrf_token()} />
+    <.live_title>
+      <%= assigns[:page_title] || "VGCAdmin" %>
+    </.live_title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.9.3/css/bulma.min.css"/>
+    <link phx-track-static rel="stylesheet" href={~p"/assets/app.css"} />
+    <script defer phx-track-static type="text/javascript" src={~p"/assets/app.js"}>
+    </script>
+  </head>
+  <body class="has-navbar-fixed-top">
+    <nav class="navbar is-fixed-top">
+      <div class="navbar-brand">
+        <div class="navbar-item">
+          <p class="title is-5">Vintage Story - Global Chat Dashboard</p>
+        </div>
+      </div>
+    </nav>
+    <div class="wrapper">
+      <section class='section'>
+        <div class="container">
+          <%= @inner_content %>
+        </div>
+      </section>
+      <footer class="footer has-text-centered">
+        <div class="container">
+            Insert lorum ipsum here - Lila
+        </div>
+      </footer>    
+    </div>
+  </body>
+</html>

@@ -1,48 +1,66 @@
 defmodule VsGlobalChat.Message do
-  @moduledoc false
+  require Logger
   use Ecto.Schema
   import Ecto.Changeset
   import Ecto.Query
-  alias VsGlobalChat.Repo
   alias Phoenix.PubSub
-  alias __MODULE__
+  alias VsGlobalChat.{Repo, User, Message}
 
   schema "messages" do
-    field :message, :string
-    field :name, :string
+    belongs_to :user, VsGlobalChat.User
+    field :text, :string
 
-    timestamps()
+    timestamps(type: :utc_datetime)
   end
 
   @doc false
   def changeset(message, attrs) do
     message
-    |> cast(attrs, [:name, :message])
-    |> validate_required([:name, :message])
-    |> validate_length(:message, min: 2)
+    |> cast(attrs, [:text])
+    |> cast_assoc(:user)
+    |> validate_required([:user, :text])
   end
 
-  def create_message(attrs) do
-    %Message{}
-    |> changeset(attrs)
-    |> Repo.insert()
-    |> notify(:message_created)
-  end
-
-  def list_messages do
-    Message
-    |> limit(20)
-    |> order_by(desc: :inserted_at)
-    |> Repo.all()
-  end
-
+  @doc false
   def subscribe() do
-    PubSub.subscribe(VsGlobalChat.PubSub, "new_message_in_database")
+    PubSub.subscribe(VsGlobalChat.PubSub, get_topic_key())
   end
 
-  def notify({:ok, message}, event) do
-    PubSub.broadcast(VsGlobalChat.PubSub, "new_message_in_database", {event, message})
+  @doc false
+  def notify(%VsGlobalChat.Message{} = message) do
+    Logger.info(message.user.name <> " sent " <> message.text)
+    PubSub.broadcast(VsGlobalChat.PubSub, get_topic_key(), {"messages_repo_changed", message})
   end
 
-  def notify({:error, reason}, _event), do: {:error, reason}
+  @doc false
+  def get_topic_key(), do: "messages_repo"
+
+  @doc false
+  def list_messages do
+    Repo.all(Message) |> Repo.preload(:user)
+  end
+
+  @doc false
+  def create(user, text) do
+    assoc = Ecto.build_assoc(%User{}, :messages, %{user: user})
+    changeset = Message.changeset(assoc, %{text: text})
+    case Repo.insert(changeset) do
+      {:ok, schema} ->
+        notify(schema)
+        {:ok, schema}
+      {:error, error_set} ->
+        {:error, error_set}
+    end
+  end
+
+  @doc false
+  def for_user(user_id) do
+    Repo.all(from m in Message, where: m.user_id == ^user_id)
+  end
+
+  @doc false
+  def get_user_from_message_id(message_id) do
+    user_id = Repo.one(from m in Message, where: m.id == ^message_id, select: m.user_id)
+    User.get_user!(user_id)
+  end
 end
