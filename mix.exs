@@ -5,7 +5,7 @@ defmodule VsGlobalChat.MixProject do
     [
       app: :vs_global_chat,
       version: "0.1.0",
-      elixir: "~> 1.14",
+      elixir: "~> 1.17.2",
       elixirc_paths: elixirc_paths(Mix.env()),
       start_permanent: Mix.env() == :prod,
       aliases: aliases(),
@@ -50,6 +50,7 @@ defmodule VsGlobalChat.MixProject do
       {:poison, "6.0.0"},
       {:httpoison, "2.2.1"},
       {:protobuf, "~> 0.12.0"},
+      {:google_protos, "~> 0.4.0"},
       {:floki, ">= 0.30.0", only: :test},
       {:phoenix_live_dashboard, "~> 0.8.3"},
       {:esbuild, "~> 0.8", runtime: Mix.env() == :dev},

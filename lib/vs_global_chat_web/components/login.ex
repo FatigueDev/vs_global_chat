@@ -2,7 +2,7 @@ defmodule VsGlobalChatWeb.Components.Login do
 
   use Surface.LiveComponent
   use Surface.Components.Context
-  import Phoenix.Component, only: [assign: 2, assign: 3, assign_new: 3]
+  # import Phoenix.Component, only: [assign: 2, assign: 3, assign_new: 3]
   # import VsGlobalChat.Helpers.Session
   # import Phoenix.Controller
   # import Phoenix.LiveView.Controller

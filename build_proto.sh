@@ -1,0 +1,1 @@
+export PATH=$PATH:~/.mix/escripts/ && protoc --elixir_out=./lib vs_global_chat.proto

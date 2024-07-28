@@ -33,15 +33,15 @@ defmodule VsGlobalChatWeb.Components.Dashboard do
           <h3 class="title has-text-centered is-3">Toolkit</h3>
         </:title>
         <Tab label="Users" icon="users">
-          <UsersComponent id="users_component"/>
+          <UsersComponent id="users_component" />
         </Tab>
         <Tab label={@message_base} icon="comments">
-          <SendMessageComponent id="send_message_component"/>
-          <MessagesComponent id="messages_component"/>
+          <SendMessageComponent id="send_message_component" />
+          <MessagesComponent id="messages_component" />
         </Tab>
       </Panel>
 
-        <VsGlobalChatWeb.Components.Card show={@show_user_modal}>
+      <VsGlobalChatWeb.Components.Card show={@show_user_modal}>
         <:header>
           {#if @modal_user != nil}
             {@modal_user.name}
@@ -51,9 +51,14 @@ defmodule VsGlobalChatWeb.Components.Dashboard do
           {#else}
             No user found
           {/if}
-          </:header>
-          {#if @modal_user != nil}
-          <Table id="modal_message_table" data={message <- Enum.sort(@modal_user.messages, &(&1.inserted_at >= &2.inserted_at))} hoverable striped>
+        </:header>
+        {#if @modal_user != nil}
+          <Table
+            id="modal_message_table"
+            data={message <- Enum.sort(@modal_user.messages, &(&1.inserted_at >= &2.inserted_at))}
+            hoverable
+            striped
+          >
             <Column label="Created">
               {time_relative(message.inserted_at)}
             </Column>
@@ -61,11 +66,10 @@ defmodule VsGlobalChatWeb.Components.Dashboard do
               {sanitize(message.text)}
             </Column>
           </Table>
-          {#else}
-            No content
-          {/if}
-        </VsGlobalChatWeb.Components.Card>
-
+        {#else}
+          No content
+        {/if}
+      </VsGlobalChatWeb.Components.Card>
     </div>
     """
   end
@@ -74,5 +78,4 @@ defmodule VsGlobalChatWeb.Components.Dashboard do
     User.toggle_ban_user(Context.get(socket, :modal_user))
     {:noreply, socket}
   end
-
 end
