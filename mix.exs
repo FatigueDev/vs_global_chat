@@ -54,7 +54,7 @@ defmodule VsGlobalChat.MixProject do
       {:floki, ">= 0.30.0", only: :test},
       {:phoenix_live_dashboard, "~> 0.8.3"},
       {:esbuild, "~> 0.8", runtime: Mix.env() == :dev},
-      {:logger_file_backend, "0.0.14", only: :dev},
+      {:logger_file_backend, "0.0.14"},
       {:logflare_logger_backend, "~> 0.11.4", only: :prod},
       {:telemetry_metrics, "~> 1.0"},
       {:telemetry_poller, "~> 1.0"},

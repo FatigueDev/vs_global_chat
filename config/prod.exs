@@ -9,10 +9,11 @@ import Config
 #   cache_static_manifest: "priv/static/cache_manifest.json"
 
 # Do not print debug messages in production
-config :logger,
-  # or other Logger level
-  level: :info,
-  backends: [LogflareLogger.HttpBackend]
+#config :logger,
+  # message: "$metadata[$level] $message\n",
+  # metadata: [:remote_ip],
+  #level: :info,
+  #backends: [LogflareLogger.HttpBackend]
 
 config :logflare_logger_backend,
   # https://api.logflare.app is configured by default and you can set your own url
@@ -34,8 +35,10 @@ config :logflare_logger_backend,
 # of environment variables, is done on config/runtime.exs.
 config :vs_global_chat, VsGlobalChatWeb.Endpoint,
   secret_key_base: Map.fetch!(System.get_env(), "SECRET_KEY_BASE"),
-  server: true,
-  force_ssl: [rewrite_on: [:x_forwarded_proto]]
+  # ,
+  server: true
+
+# force_ssl: [rewrite_on: [:x_forwarded_proto]]
 
 config :vs_global_chat, VsGlobalChat.Repo,
   adapter: Ecto.Adapters.Postgres,
