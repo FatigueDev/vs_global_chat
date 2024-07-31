@@ -28,7 +28,7 @@ defmodule VsGlobalChat.Message do
 
   @doc false
   def notify(%VsGlobalChat.Message{} = message) do
-    Logger.info(message.user.name <> " sent " <> message.text)
+    # Logger.info(message.user.name <> " sent " <> message.text)
     PubSub.broadcast(VsGlobalChat.PubSub, get_topic_key(), {"messages_repo_changed", message})
   end
 

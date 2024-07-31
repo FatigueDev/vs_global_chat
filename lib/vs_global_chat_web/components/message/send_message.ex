@@ -1,6 +1,7 @@
 defmodule VsGlobalChatWeb.Components.SendMessageComponent do
   use VsGlobalChatWeb, :live_surface_component
 
+  require Protobuf.Wire.Types
   alias Phoenix.LiveView.JS
 
   alias Surface.Components.Context
@@ -35,6 +36,10 @@ defmodule VsGlobalChatWeb.Components.SendMessageComponent do
       socket
       |> assign(:message_value, "")
       |> Phoenix.LiveView.push_event("clear_after_sending_system_message", %{})
+
+    wired_value = Protobuf.Wire.encode(:string, "<strong>VSG Administrator:</strong> #{value}") |> List.to_string()
+    very_wired_value = "\n" <> wired_value
+    Phoenix.PubSub.broadcast(VsGlobalChat.PubSub, "chat", {:broadcast, %VsGlobalChatProto.Payload{Event: "broadcast", Module: "chat", PacketType: "System.String", PacketValue: very_wired_value}})
 
     {:noreply, socket}
   end

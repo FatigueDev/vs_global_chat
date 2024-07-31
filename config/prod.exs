@@ -9,11 +9,11 @@ import Config
 #   cache_static_manifest: "priv/static/cache_manifest.json"
 
 # Do not print debug messages in production
-#config :logger,
-  # message: "$metadata[$level] $message\n",
-  # metadata: [:remote_ip],
-  #level: :info,
-  #backends: [LogflareLogger.HttpBackend]
+config :logger,
+  message: "$metadata[$level] $message\n",
+  metadata: [:remote_ip],
+  level: :info,
+  backends: [LogflareLogger.HttpBackend]
 
 config :logflare_logger_backend,
   # https://api.logflare.app is configured by default and you can set your own url

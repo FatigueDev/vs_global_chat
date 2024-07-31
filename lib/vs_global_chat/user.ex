@@ -38,7 +38,7 @@ defmodule VsGlobalChat.User do
 
   @doc false
   def notify(%VsGlobalChat.User{} = user) do
-    Logger.info(user.name <> " has changed their user.")
+    Logger.info(user.name <> " has updated their DB User.")
     PubSub.broadcast(VsGlobalChat.PubSub, get_topic_key(), {"users_repo_changed", :changed})
   end
 
@@ -46,12 +46,12 @@ defmodule VsGlobalChat.User do
 
   @doc false
   def list_users do
-    Repo.all(from u in VsGlobalChat.User, where: u.permissions != :administrator) |> Repo.preload(:messages)
+    Repo.all(from u in VsGlobalChat.User) |> Repo.preload(:messages)
   end
 
   @doc false
   def get_user!(id) do
-    Repo.get!((from u in VsGlobalChat.User, where: u.permissions != :administrator), id) |> Repo.preload(:messages)
+    Repo.get!((from u in VsGlobalChat.User), id) |> Repo.preload(:messages)
   end
 
   def get_user_by_uid(uid) do

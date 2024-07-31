@@ -58,7 +58,7 @@ defmodule VsGlobalChatWeb.UserSocket do
         end
 
         if not repo_user.banned and user_matches_params?(repo_user, uid, auth_token) do
-          Logger.info(%{event: :player_logged_in, user: repo_user})
+          Logger.info("#{repo_user.name} has logged in!")
           {:ok, Map.put(state, :user, repo_user)}
         else
           Logger.warning(%{
@@ -84,7 +84,6 @@ defmodule VsGlobalChatWeb.UserSocket do
 
   def post_connect({:ok, state}) do
     PubSub.subscribe(VsGlobalChat.PubSub, state.module)
-    dbg("Subscribing to " <> state.module)
     {:ok, state}
   end
 
@@ -113,22 +112,46 @@ defmodule VsGlobalChatWeb.UserSocket do
     end
   end
 
-  def handle_payload(%VsGlobalChatProto.Payload{Event: "broadcast"} = payload, state) do
-    dbg("Broadcasting!")
+  def handle_payload(%VsGlobalChatProto.Payload{Event: "broadcast", Module: "chat"} = payload, state) do
+
+    decoded_string = Protobuf.Wire.decode(:string, Map.get(payload, :PacketValue))
+
+    cleaned_text =
+      Phoenix.HTML.html_escape(decoded_string)
+      |> Phoenix.HTML.safe_to_string()
+      |> String.replace_leading("\n", "")
+
+
+    Message.create(Map.get(state, :user), cleaned_text)
 
     Phoenix.PubSub.broadcast(
       VsGlobalChat.PubSub,
-      Map.get(payload, :Module),
+      "chat",
       {:broadcast, payload}
     )
 
     {:ok, state}
   end
 
-  # def handle_payload(%VsGlobalChatProto.Payload{} = payload, state) do
-  #   # dbg("Handling processed")
-  #   {:reply, :ok, {:binary, Protobuf.encode(payload)}, state}
-  # end
+  def handle_payload(%VsGlobalChatProto.Payload{Event: "broadcast", Module: module} = payload, state) do
+
+    Phoenix.PubSub.broadcast(
+      VsGlobalChat.PubSub,
+      module,
+      {:broadcast, payload}
+    )
+
+    {:ok, state}
+  end
+
+  def handle_payload(%VsGlobalChatProto.Payload{Event: "subscribe", Module: module} = _payload, state) do
+    Phoenix.PubSub.subscribe(VsGlobalChat.PubSub, module)
+    {:ok, state}
+  end
+
+  def handle_payload(%VsGlobalChatProto.Payload{Event: "heartbeat"} = _payload, state) do
+    {:ok, state}
+  end
 
   def handle_info({:broadcast, %VsGlobalChatProto.Payload{} = payload}, state) do
     # dbg("Trying to set payload to processed")
