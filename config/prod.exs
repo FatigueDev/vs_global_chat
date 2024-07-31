@@ -11,7 +11,7 @@ import Config
 # Do not print debug messages in production
 config :logger,
   message: "$metadata[$level] $message\n",
-  metadata: [:remote_ip],
+  # metadata: [:remote_ip],
   level: :info,
   backends: [LogflareLogger.HttpBackend]
 
