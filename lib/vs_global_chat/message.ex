@@ -37,7 +37,7 @@ defmodule VsGlobalChat.Message do
 
   @doc false
   def list_messages do
-    Repo.all(Message) |> Repo.preload(:user)
+    Repo.all(from m in Message, order_by: m.inserted_at) |> Repo.preload(:user)
   end
 
   @doc false
@@ -55,7 +55,7 @@ defmodule VsGlobalChat.Message do
 
   @doc false
   def for_user(user_id) do
-    Repo.all(from m in Message, where: m.user_id == ^user_id)
+    Repo.all(from m in Message, where: m.user_id == ^user_id, order_by: m.inserted_at)
   end
 
   @doc false
